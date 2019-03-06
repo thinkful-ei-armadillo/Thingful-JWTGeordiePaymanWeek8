@@ -3,7 +3,7 @@
 const express = require('express');
 const path = require('path');
 const ReviewsService = require('./reviews-service');
-const {requireAuth} = require('../middleware/jwt-auth')
+const { requireAuth } = require('../middleware/jwt-auth');
 
 const reviewsRouter = express.Router();
 const jsonBodyParser = express.json();
@@ -12,8 +12,8 @@ reviewsRouter
   .route('/')
   .all(requireAuth)
   .post(jsonBodyParser, (req, res, next) => {
-    const { thing_id, rating, text, user_id} = req.body;
-    const newReview = { thing_id, rating, text, user_id };
+    const { thing_id, rating, text } = req.body;
+    const newReview = { thing_id, rating, text };
 
     for (const [key, value] of Object.entries(newReview))
       if (value == null)
@@ -23,10 +23,7 @@ reviewsRouter
 
     newReview.user_id = req.user.id;
 
-    ReviewsService.insertReview(
-      req.app.get('db'),
-      newReview
-    )
+    ReviewsService.insertReview(req.app.get('db'), newReview)
       .then(review => {
         res
           .status(201)
